@@ -1,5 +1,9 @@
+use clap::Parser;
+
+mod args;
 mod tag;
 
+use args::Args;
 use tag::{Child, Tag};
 
 struct PasteContent {
@@ -58,6 +62,9 @@ impl PasteContent {
 }
 
 fn main() {
+    let args = Args::parse();
+    println!("{:?}", args);
+
     let mut paste = PasteContent::new("A Title Here");
     paste
         .add_line("This is a line")
