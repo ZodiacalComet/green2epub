@@ -73,10 +73,12 @@ impl PasteContent {
     }
 }
 
-const COVER_IMG: &str = "img/cover.png";
 const COVER_STYLESHEET: &str = "style/coverstyle.css";
 
-fn coverpage_content() -> String {
+fn coverpage_content<S>(href: S) -> String
+where
+    S: AsRef<str>,
+{
     let mut html = Tag::new("html");
     html.attribute("xmlns", "http://www.w3.org/1999/xhtml")
         .attribute("xmlns:epub", "http://www.idpf.org/2007/ops")
@@ -113,7 +115,7 @@ fn coverpage_content() -> String {
                             Tag::new("image")
                                 .attribute("width", "588")
                                 .attribute("height", "512")
-                                .attribute("xlink:href", format!("../{}", COVER_IMG)),
+                                .attribute("xlink:href", format!("../{}", href.as_ref())),
                         ),
                 ),
         );
@@ -164,9 +166,23 @@ fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {
         }
     }
 
-    if let Some(path) = args.cover {
-        let reader = File::open(path)?;
-        epub.add_cover_image(COVER_IMG, reader, "image/png")?;
+    if let Some(path) = args.cover.map(PathBuf::from) {
+        let extension = path
+            .extension()
+            .map(|os_str| os_str.to_string_lossy().into_owned())
+            .unwrap_or_else(|| "png".into());
+
+        let href = format!("img/cover.{}", extension);
+        let mime_type = match extension.as_ref() {
+            "bmp" => "image/bmp",
+            "jpg" | "jpeg" => "image/jpeg",
+            "gif" => "image/gif",
+            "svg" => "image/svg+xml",
+            _ => "image/png",
+        };
+
+        let reader = File::open(&path)?;
+        epub.add_cover_image(&href, reader, mime_type)?;
 
         epub.add_resource(
             COVER_STYLESHEET,
@@ -178,7 +194,7 @@ fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {
             "text/css",
         )?;
         epub.add_content(
-            EpubContent::new("content/cover.xhtml", coverpage_content().as_bytes())
+            EpubContent::new("content/cover.xhtml", coverpage_content(&href).as_bytes())
                 .title("Cover")
                 .reftype(ReferenceType::Cover),
         )?;
