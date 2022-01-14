@@ -1,5 +1,7 @@
 use std::fmt;
 
+use html_escape::encode_text;
+
 #[derive(Clone)]
 pub enum Child {
     Tag(Tag),
@@ -40,7 +42,7 @@ impl fmt::Display for Child {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Child::Tag(tag) => write!(f, "{}", tag),
-            Child::Text(text) => write!(f, "{}", text),
+            Child::Text(text) => write!(f, "{}", encode_text(text)),
         }
     }
 }
