@@ -2,7 +2,7 @@ use std::fmt;
 
 use html_escape::encode_text;
 
-#[derive(Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Child {
     Tag(Tag),
     Text(String),
@@ -48,7 +48,7 @@ impl fmt::Display for Child {
 }
 
 // TODO: Is there a better name for `WithValue` variant?
-#[derive(Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Attribute {
     WithValue(String, String),
     Boolean(String),
@@ -63,7 +63,7 @@ impl fmt::Display for Attribute {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Tag {
     name: String,
     attributes: Vec<Attribute>,

@@ -7,9 +7,11 @@ use clap::Parser;
 use epub_builder::{EpubBuilder, EpubContent, EpubVersion, ReferenceType, ZipLibrary};
 
 mod args;
+mod parser;
 mod tag;
 
 use args::Args;
+use parser::{LineParser, RESET_FOREGROUND_CLASS};
 use tag::{Child, Tag};
 
 fn xhtml_content_from_html_tag(html: Tag) -> String {
@@ -60,7 +62,7 @@ impl PasteContent {
                     .child(Tag::new("title").child(self.title))
                     .child(
                         Tag::new("link")
-                            .attribute("href", "../style.css")
+                            .attribute("href", "../stylesheet.css")
                             .attribute("rel", "stylesheet")
                             .attribute("type", "text/css"),
                     ),
@@ -119,6 +121,34 @@ fn coverpage_content() -> String {
     xhtml_content_from_html_tag(html)
 }
 
+fn stylesheet_content<G, S>(green_color: G, spoiler_color: S) -> Vec<u8>
+where
+    G: AsRef<str>,
+    S: AsRef<str>,
+{
+    let mut bytes: Vec<u8> = Vec::new();
+    bytes.extend(
+        include_bytes!(concat!(env!("CARGO_MANIFEST_DIR"), "/static/style.css")).as_slice(),
+    );
+
+    // By default, highlight all paragraphs with green color and use a class to remove it.
+    // This is because most of the lines are going to be highlighted in the majority of greens
+    // anyways.
+    bytes.extend(
+        format!(
+            "p {{ color: {green_color}; }}\n\
+            .{reset_foreground_class} {{ color: initial; }}\n\
+            p > span {{ background-color: {spoiler_color}; color: transparent; }}",
+            green_color = green_color.as_ref(),
+            spoiler_color = spoiler_color.as_ref(),
+            reset_foreground_class = RESET_FOREGROUND_CLASS
+        )
+        .as_bytes(),
+    );
+
+    bytes
+}
+
 fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {
     let args = Args::parse();
 
@@ -126,7 +156,7 @@ fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {
     epub.epub_version(EpubVersion::V30)
         .metadata("author", args.author)?
         .metadata("title", args.title)?
-        .stylesheet("".as_bytes())?;
+        .stylesheet(stylesheet_content(args.green_color, args.spoiler_color).as_slice())?;
 
     if let Some(subjects) = args.subjects {
         for subject in subjects {
@@ -169,6 +199,7 @@ fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {
             .to_string_lossy();
         let mut paste = PasteContent::new(&title);
 
+        let mut line_parser = LineParser::default();
         let content = read_to_string(&path)?;
         for line in content.lines() {
             if line.is_empty() {
@@ -176,9 +207,7 @@ fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {
                 continue;
             }
 
-            // TODO: Highlight lines that start with ">".
-            // TODO: Parse spoilers.
-            paste.add_line(Tag::new("p").child(line));
+            paste.add_line(line_parser.parse(line));
         }
 
         epub.add_content(
