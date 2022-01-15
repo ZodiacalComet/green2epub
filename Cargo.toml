@@ -9,3 +9,7 @@ edition = "2021"
 clap = { version = "3.0", features = ["derive"] }
 epub-builder = { git = "https://github.com/ZodiacalComet/epub-builder.git", branch = "use-case-patch" }
 html-escape = "0.2"
+
+log = "0.4"
+humantime = "2.1"
+console = "0.15"

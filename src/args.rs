@@ -23,6 +23,9 @@ pub struct Args {
     /// Color of the spoiler highlight.
     #[clap(long, default_value = "#000")]
     pub spoiler_color: String,
+    /// Shows verbose output, can be used multiple times to set level of verbosity.
+    #[clap(short, long, parse(from_occurrences))]
+    pub verbose: usize,
     /// Path for the generated epub file.
     #[clap(short, long)]
     pub output: String,

@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate log;
+
 use std::{
     fs::{read_to_string, File, OpenOptions},
     path::PathBuf,
@@ -8,6 +11,7 @@ use epub_builder::{EpubBuilder, EpubContent, EpubVersion, ReferenceType, ZipLibr
 
 mod args;
 mod content;
+mod logger;
 mod parser;
 mod tag;
 
@@ -18,6 +22,9 @@ use tag::Tag;
 
 fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {
     let args = Args::parse();
+    logger::init(args.verbose).expect("failed to initialize logger");
+
+    debug!("Parsed arguments: {:?}", args);
 
     let mut epub = EpubBuilder::new(ZipLibrary::new()?)?;
     epub.epub_version(EpubVersion::V30)
@@ -32,6 +39,8 @@ fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {
     }
 
     if let Some(path) = args.cover.map(PathBuf::from) {
+        info!("Setting cover to {:?}", path.display());
+
         let extension = path
             .extension()
             .map(|os_str| os_str.to_string_lossy().into_owned())
@@ -46,9 +55,11 @@ fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {
             _ => "image/png",
         };
 
+        debug!("Opening cover file");
         let reader = File::open(&path)?;
-        epub.add_cover_image(&href, reader, mime_type)?;
 
+        debug!("Adding cover resources to EPUB");
+        epub.add_cover_image(&href, reader, mime_type)?;
         epub.add_resource(
             COVER_STYLESHEET,
             include_bytes!(concat!(
@@ -74,14 +85,21 @@ fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {
         .enumerate()
         .map(|(i, path)| (i + 1, PathBuf::from(path)))
     {
+        if !log_enabled!(log::Level::Debug) {
+            info!("Parsing {:?}", path.display());
+        }
+
         let title = path
             .file_stem()
             .expect(&format!("failed to get stem of {}", path.display()))
             .to_string_lossy();
         let mut paste = PasteContent::new(&title);
 
-        let mut line_parser = LineParser::default();
+        debug!("Opening file {:?}", path.display());
         let content = read_to_string(&path)?;
+
+        debug!("Parsing paste content");
+        let mut line_parser = LineParser::default();
         for line in content.lines() {
             if line.is_empty() {
                 paste.add_line(Tag::new("br"));
@@ -91,6 +109,11 @@ fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {
             paste.add_line(line_parser.parse(line));
         }
 
+        debug!(
+            "Adding parsed content of {:?} to EPUB with title {:?}",
+            path.display(),
+            &title
+        );
         epub.add_content(
             EpubContent::new(
                 format!("content/paste-{:03}.xhtml", count),
@@ -100,12 +123,14 @@ fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {
         )?;
     }
 
+    debug!("Creating output file");
     let mut output_file = OpenOptions::new()
         .create(true)
         .truncate(true)
         .write(true)
-        .open(args.output)?;
+        .open(&args.output)?;
     epub.generate(&mut output_file)?;
+    info!("Successfully generated {:?}", args.output);
 
     Ok(())
 }
