@@ -8,6 +8,7 @@ use std::{
 
 use clap::Parser;
 use epub_builder::{EpubBuilder, EpubContent, EpubVersion, ReferenceType, ZipLibrary};
+use indicatif::{ProgressBar, ProgressFinish, ProgressIterator, ProgressStyle};
 
 mod args;
 mod content;
@@ -85,10 +86,6 @@ fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {
         .enumerate()
         .map(|(i, path)| (i + 1, PathBuf::from(path)))
     {
-        if !log_enabled!(log::Level::Debug) {
-            info!("Parsing {:?}", path.display());
-        }
-
         let title = path
             .file_stem()
             .expect(&format!("failed to get stem of {}", path.display()))
@@ -98,9 +95,15 @@ fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {
         debug!("Opening file {:?}", path.display());
         let content = read_to_string(&path)?;
 
-        debug!("Parsing paste content");
         let mut line_parser = LineParser::default();
-        for line in content.lines() {
+        let progress = ProgressBar::new(content.lines().count() as u64)
+            .with_message(format!("Parsing {:?}", path.display()))
+            .with_style(
+                ProgressStyle::default_spinner()
+                    .template("  {spinner}  {msg} {percent:>3}%")
+                    .on_finish(ProgressFinish::AndClear),
+            );
+        for line in content.lines().progress_with(progress) {
             if line.is_empty() {
                 paste.add_line(Tag::new("br"));
                 continue;
@@ -108,6 +111,8 @@ fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {
 
             paste.add_line(line_parser.parse(line));
         }
+
+        info!("Parsed {:?}", path.display());
 
         debug!(
             "Adding parsed content of {:?} to EPUB with title {:?}",
