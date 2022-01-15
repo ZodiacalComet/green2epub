@@ -7,6 +7,7 @@ use std::{
 };
 
 use clap::Parser;
+use console::style;
 use epub_builder::{EpubBuilder, EpubContent, EpubVersion, ReferenceType, ZipLibrary};
 use indicatif::{ProgressBar, ProgressFinish, ProgressIterator, ProgressStyle};
 
@@ -40,7 +41,7 @@ fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {
     }
 
     if let Some(path) = args.cover.map(PathBuf::from) {
-        info!("Setting cover to {:?}", path.display());
+        info!("Setting cover to {:?}", style(path.display()).bold());
 
         let extension = path
             .extension()
@@ -97,7 +98,7 @@ fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {
 
         let mut line_parser = LineParser::default();
         let progress = ProgressBar::new(content.lines().count() as u64)
-            .with_message(format!("Parsing {:?}", path.display()))
+            .with_message(format!("Parsing {:?}", style(path.display()).bold()))
             .with_style(
                 ProgressStyle::default_spinner()
                     .template("  {spinner}  {msg} {percent:>3}%")
@@ -112,7 +113,7 @@ fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {
             paste.add_line(line_parser.parse(line));
         }
 
-        info!("Parsed {:?}", path.display());
+        info!("Parsed {:?}", style(path.display()).bold());
 
         debug!(
             "Adding parsed content of {:?} to EPUB with title {:?}",
@@ -135,7 +136,14 @@ fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {
         .write(true)
         .open(&args.output)?;
     epub.generate(&mut output_file)?;
-    info!("Successfully generated {:?}", args.output);
+    info!(
+        "{}",
+        style(format_args!(
+            "Successfully generated {:?}",
+            style(args.output).bold()
+        ))
+        .green()
+    );
 
     Ok(())
 }
