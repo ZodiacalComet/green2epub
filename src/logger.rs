@@ -63,11 +63,16 @@ impl Log for Logger {
             let level = record.level();
 
             if self.is_verbose() {
-                self.write(format!(
+                let prefix = format!(
                     "[{}] [{:^7}] ",
                     humantime::format_rfc3339_seconds(SystemTime::now()),
                     level,
-                ));
+                );
+
+                match level {
+                    Level::Trace | Level::Debug => self.write(style(prefix).dim()),
+                    _ => self.write(prefix),
+                };
             } else {
                 match level {
                     Level::Error => self.write(style("ERROR: ").red().bold()),
@@ -80,6 +85,7 @@ impl Log for Logger {
             match level {
                 Level::Error => self.write(style(args).red()),
                 Level::Warn => self.write(style(args).yellow()),
+                Level::Trace | Level::Debug => self.write(style(args).dim()),
                 _ => self.write(args),
             };
 
