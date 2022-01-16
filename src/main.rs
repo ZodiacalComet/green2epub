@@ -13,18 +13,19 @@ use indicatif::{ProgressBar, ProgressFinish, ProgressIterator, ProgressStyle};
 
 mod args;
 mod content;
+mod errors;
 mod logger;
 mod parser;
 mod tag;
 
 use args::Args;
 use content::{coverpage_content, stylesheet_content, PasteContent, COVER_STYLESHEET};
+use errors::{CliError, Result};
 use parser::LineParser;
 use tag::Tag;
 
-fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {
-    let args = Args::parse();
-    logger::init(args.verbose).expect("failed to initialize logger");
+fn run(args: Args) -> Result<()> {
+    logger::init(args.verbose)?;
 
     debug!("Parsed arguments: {:?}", args);
 
@@ -58,7 +59,9 @@ fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {
         };
 
         debug!("Opening cover file");
-        let reader = File::open(&path)?;
+        let reader = File::open(&path).map_err(|err| {
+            CliError::from(err).context(format!("failed to open cover image: {:?}", path.display()))
+        })?;
 
         debug!("Adding cover resources to EPUB");
         epub.add_cover_image(&href, reader, mime_type)?;
@@ -94,7 +97,9 @@ fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {
         let mut paste = PasteContent::new(&title);
 
         debug!("Opening file {:?}", path.display());
-        let content = read_to_string(&path)?;
+        let content = read_to_string(&path).map_err(|err| {
+            CliError::from(err).context(format!("failed to read input file: {:?}", path.display()))
+        })?;
 
         let mut line_parser = LineParser::default();
         let progress = ProgressBar::new(content.lines().count() as u64)
@@ -134,8 +139,14 @@ fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {
         .create(true)
         .truncate(true)
         .write(true)
-        .open(&args.output)?;
-    epub.generate(&mut output_file)?;
+        .open(&args.output)
+        .map_err(|err| {
+            CliError::from(err).context(format!("failed to create output file: {:?}", &args.output))
+        })?;
+
+    epub.generate(&mut output_file)
+        .map_err(|err| CliError::from(err).context("failed to generate EPUB"))?;
+
     info!(
         "{}",
         style(format_args!(
@@ -146,4 +157,13 @@ fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {
     );
 
     Ok(())
+}
+
+fn main() {
+    let args = Args::parse();
+
+    if let Err(err) = run(args) {
+        error!("{}", err);
+        std::process::exit(1)
+    }
 }
