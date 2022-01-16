@@ -5,7 +5,7 @@ use clap::Parser;
 #[clap(version, author)]
 /// Create an EPUB from text files in greentext format.
 pub struct Args {
-    /// Title of the green.
+    /// Title of the greentext.
     #[clap(short, long)]
     pub title: String,
     /// Name of the author.
@@ -14,7 +14,7 @@ pub struct Args {
     /// Cover image to use.
     #[clap(short, long)]
     pub cover: Option<String>,
-    /// Green subjects/tags.
+    /// Greentext subjects/tags.
     #[clap(short, long)]
     pub subjects: Option<Vec<String>>,
     /// Color of the green highlight.
@@ -29,6 +29,6 @@ pub struct Args {
     /// Path for the generated epub file.
     #[clap(short, long)]
     pub output: String,
-    /// Text files in "green" format to convert.
+    /// Text files in greentext format to convert.
     pub files: Vec<String>,
 }
