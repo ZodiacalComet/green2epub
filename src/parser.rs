@@ -27,6 +27,10 @@ pub struct LineParser {
 }
 
 impl LineParser {
+    pub fn is_spoiler_open(&self) -> bool {
+        self.open_spoiler
+    }
+
     pub fn parse<S: ?Sized>(&mut self, line: &S) -> Tag
     where
         S: AsRef<str>,

@@ -120,6 +120,13 @@ fn run(args: Args) -> Result<()> {
 
         info!("Parsed {:?}", style(path.display()).bold());
 
+        if line_parser.is_spoiler_open() {
+            warn!(
+                "Input file has a spoiler that hasn't been closed and extended to the end of the file: {:?}",
+                style(path.display()).bold(),
+            );
+        }
+
         debug!(
             "Adding parsed content of {:?} to EPUB with title {:?}",
             path.display(),
