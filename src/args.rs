@@ -15,7 +15,9 @@ pub struct Args {
     #[clap(short, long)]
     pub cover: Option<String>,
     /// Greentext subjects/tags.
-    #[clap(short, long)]
+    ///
+    /// Can be used multiple times to set more than one.
+    #[clap(short, long = "subject")]
     pub subjects: Option<Vec<String>>,
     /// Color of the green highlight.
     #[clap(long, default_value = "#2CAF26")]
