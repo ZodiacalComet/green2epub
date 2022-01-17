@@ -1,6 +1,11 @@
 use crate::parser::RESET_FOREGROUND_CLASS;
 use crate::tag::{Child, Tag};
 
+const NS_XHTML: &str = "http://www.w3.org/1999/xhtml";
+const NS_OPS: &str = "http://www.idpf.org/2007/ops";
+const NS_SVG: &str = "http://www.w3.org/2000/svg";
+const NS_XLINK: &str = "http://www.w3.org/1999/xlink";
+
 pub const COVER_STYLESHEET: &str = "style/coverstyle.css";
 
 fn xhtml_content_from_html_tag(html: Tag) -> String {
@@ -19,8 +24,8 @@ where
     S: AsRef<str>,
 {
     let mut html = Tag::new("html");
-    html.attribute("xmlns", "http://www.w3.org/1999/xhtml")
-        .attribute("xmlns:epub", "http://www.idpf.org/2007/ops")
+    html.attribute("xmlns", NS_XHTML)
+        .attribute("xmlns:epub", NS_OPS)
         .attribute("lang", "en")
         .attribute("xml:lang", "en")
         .child(
@@ -45,8 +50,8 @@ where
                 .attribute("id", "coverpage")
                 .child(
                     Tag::new("svg")
-                        .attribute("xmlns", "http://www.w3.org/2000/svg")
-                        .attribute("xmlns:xlink", "http://www.w3.org/1999/xlink")
+                        .attribute("xmlns", NS_SVG)
+                        .attribute("xmlns:xlink", NS_XLINK)
                         .attribute("version", "1.1")
                         .attribute("viewBox", "0 0 588 512")
                         .attribute("id", "cover")
@@ -116,8 +121,8 @@ impl PasteContent {
 
     pub fn build(self) -> String {
         let mut html = Tag::new("html");
-        html.attribute("xmlns", "http://www.w3.org/1999/xhtml")
-            .attribute("xmlns:epub", "http://www.idpf.org/2007/ops")
+        html.attribute("xmlns", NS_XHTML)
+            .attribute("xmlns:epub", NS_OPS)
             .attribute(
                 "epub:prefix",
                 "z3998: http://www.daisy.org/z3998/2012/vocab/structure/#",
