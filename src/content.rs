@@ -10,6 +10,10 @@ fn xhtml_content_from_html_tag(html: Tag) -> String {
     )
 }
 
+// This cover page is fimfic2epub's cover page translated to the Tag's constructor with no
+// remarkable differences.
+//  https://github.com/daniel-j/fimfic2epub/blob/master/src/templates.js#L353
+//  MIT License: https://github.com/daniel-j/fimfic2epub/blob/master/LICENSE
 pub fn coverpage_content<S>(href: S) -> String
 where
     S: AsRef<str>,
