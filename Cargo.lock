@@ -157,8 +157,8 @@ checksum = "a357d28ed41a50f9c765dbfe56cbc04a64e53e5fc58ba79fbc34c10ef3df831f"
 
 [[package]]
 name = "epub-builder"
-version = "0.4.8"
-source = "git+https://github.com/ZodiacalComet/epub-builder.git?branch=use-case-patch#2fdf97f378e714144f9b73ca4bc0e4e8e5123d21"
+version = "0.4.10"
+source = "git+https://github.com/lise-henry/epub-builder.git?rev=ed4f8da#ed4f8da5b8dd5e7b0381237614f16473e2958f43"
 dependencies = [
  "chrono",
  "error-chain",

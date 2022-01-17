@@ -8,7 +8,7 @@ license = "Unlicense"
 
 [dependencies]
 clap = { version = "3.0", features = ["derive"] }
-epub-builder = { git = "https://github.com/ZodiacalComet/epub-builder.git", branch = "use-case-patch" }
+epub-builder = { git = "https://github.com/lise-henry/epub-builder.git", rev = "ed4f8da" }
 html-escape = "0.2"
 
 log = "0.4"
