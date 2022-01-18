@@ -113,7 +113,9 @@ The resulting binary will be located in `target/releases`.
 
 ## Acknowledgments
 
-To these other awesome projects that made this one less of a pain to make!
+To [fimfic2epub] by [@daniel-j] which, besides being used as a base, greatly inspired this little project. It's excellent if you want [Fimfiction stories][fimfiction] as a proper EPUB, so check it out!
+
+And to these other awesome projects that made this one less of a pain to make!
 
 - [clap], that powers the CLI with it excellent argument parser.
 - [epub-builder], that handles the actual EPUB generation.
@@ -134,6 +136,9 @@ The rest of the project is under the [Unlicense License](LICENSE).
 
 [fimfic2epub]: https://github.com/daniel-j/fimfic2epub
 [fimfic2epub-styles]: https://github.com/daniel-j/fimfic2epub/tree/master/src/style
+[@daniel-j]: https://github.com/daniel-j
+
+[fimfiction]: https://www.fimfiction.net/
 
 [epub-builder]: https://github.com/lise-henry/epub-builder
 [clap]: https://github.com/clap-rs/clap
