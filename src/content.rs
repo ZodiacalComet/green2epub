@@ -19,7 +19,7 @@ fn xhtml_content_from_html_tag(html: Tag) -> String {
 // remarkable differences.
 //  https://github.com/daniel-j/fimfic2epub/blob/master/src/templates.js#L353
 //  MIT License: https://github.com/daniel-j/fimfic2epub/blob/master/LICENSE
-pub fn coverpage_content<S>(href: S) -> String
+pub fn coverpage_content<S>(href: S, (width, height): (usize, usize)) -> String
 where
     S: AsRef<str>,
 {
@@ -34,7 +34,7 @@ where
                 .child(
                     Tag::new("meta")
                         .attribute("name", "viewport")
-                        .attribute("content", "width=588, height=512"),
+                        .attribute("content", format!("width={}, height={}", width, height)),
                 )
                 .child(Tag::new("title").child("Cover"))
                 .child(
@@ -53,12 +53,12 @@ where
                         .attribute("xmlns", NS_SVG)
                         .attribute("xmlns:xlink", NS_XLINK)
                         .attribute("version", "1.1")
-                        .attribute("viewBox", "0 0 588 512")
+                        .attribute("viewBox", format!("0 0 {} {}", width, height))
                         .attribute("id", "cover")
                         .child(
                             Tag::new("image")
-                                .attribute("width", "588")
-                                .attribute("height", "512")
+                                .attribute("width", width)
+                                .attribute("height", height)
                                 .attribute("xlink:href", format!("../{}", href.as_ref())),
                         ),
                 ),

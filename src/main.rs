@@ -3,6 +3,7 @@ extern crate log;
 
 use std::{
     fs::{read_to_string, File, OpenOptions},
+    io::Read,
     path::PathBuf,
 };
 
@@ -44,27 +45,54 @@ fn run(args: Args) -> Result<()> {
     if let Some(path) = args.cover.map(PathBuf::from) {
         info!("Setting cover to {:?}", style(path.display()).bold());
 
-        let extension = path
-            .extension()
-            .map(|os_str| os_str.to_string_lossy().into_owned())
-            .unwrap_or_else(|| "png".into());
+        debug!("Opening cover file");
+        let mut image_bytes: Vec<u8> = Vec::new();
+        File::open(&path)
+            .and_then(|mut file| file.read_to_end(&mut image_bytes))
+            .map_err(|err| {
+                CliError::from(err)
+                    .context(format!("failed to open cover image: {:?}", path.display()))
+            })?;
 
-        let href = format!("img/cover.{}", extension);
-        let mime_type = match extension.as_ref() {
-            "bmp" => "image/bmp",
-            "jpg" | "jpeg" => "image/jpeg",
-            "gif" => "image/gif",
-            "svg" => "image/svg+xml",
-            _ => "image/png",
+        let (extension, mime_type, dimensions) = match (
+            imagesize::image_type(&image_bytes),
+            imagesize::blob_size(&image_bytes),
+        ) {
+            (Ok(img_type), Ok(img_size)) => {
+                use imagesize::ImageType;
+
+                let dimensions = (img_size.width, img_size.height);
+                let (extension, mime_type) = match img_type {
+                    ImageType::Bmp => ("bmp", "image/bmp"),
+                    ImageType::Gif => ("gif", "image/gif"),
+                    ImageType::Jpeg => ("jpg", "image/jpeg"),
+                    ImageType::Png => ("png", "image/png"),
+                    ImageType::Webp => ("webp", "image/webp"),
+                    _ => Err(CliError::from(format!(
+                        "invalid format for cover image: {:?}",
+                        img_type
+                    )))?,
+                };
+
+                debug!("Cover image format: {:?}", extension);
+                debug!("Cover image size: {:?}", dimensions);
+
+                (extension, mime_type, dimensions)
+            }
+            (Err(err), _) => Err(CliError::from(err).context(format!(
+                "failed to recognize cover image format: {:?}",
+                path.display()
+            )))?,
+            (_, Err(err)) => Err(CliError::from(err).context(format!(
+                "failed to get cover image dimensions: {:?}",
+                path.display()
+            )))?,
         };
 
-        debug!("Opening cover file");
-        let reader = File::open(&path).map_err(|err| {
-            CliError::from(err).context(format!("failed to open cover image: {:?}", path.display()))
-        })?;
+        let href = format!("img/cover.{}", extension);
 
         debug!("Adding cover resources to EPUB");
-        epub.add_cover_image(&href, reader, mime_type)?;
+        epub.add_cover_image(&href, image_bytes.as_slice(), mime_type)?;
         epub.add_resource(
             COVER_STYLESHEET,
             include_bytes!(concat!(
@@ -75,9 +103,12 @@ fn run(args: Args) -> Result<()> {
             "text/css",
         )?;
         epub.add_content(
-            EpubContent::new("content/cover.xhtml", coverpage_content(&href).as_bytes())
-                .title("Cover")
-                .reftype(ReferenceType::Cover),
+            EpubContent::new(
+                "content/cover.xhtml",
+                coverpage_content(&href, dimensions).as_bytes(),
+            )
+            .title("Cover")
+            .reftype(ReferenceType::Cover),
         )?;
     }
 

@@ -1,6 +1,7 @@
 use std::{error::Error, fmt, io};
 
 use epub_builder::Error as EpubError;
+use imagesize::ImageError;
 use log::SetLoggerError;
 
 pub type Result<T> = std::result::Result<T, CliError>;
@@ -10,6 +11,8 @@ pub enum ErrorKind {
     Epub(EpubError),
     Log(SetLoggerError),
     Io(io::Error),
+    Image(ImageError),
+    Msg(String),
 }
 
 #[derive(Debug)]
@@ -43,6 +46,8 @@ impl fmt::Display for CliError {
             Epub(err) => writeln!(f, "Epub error: {}", err)?,
             Log(err) => writeln!(f, "Log error: {}", err)?,
             Io(err) => writeln!(f, "IO error: {}", err)?,
+            Image(err) => writeln!(f, "Image error: {}", err)?,
+            Msg(msg) => writeln!(f, "{}", msg)?,
         };
 
         if let Some(context) = &self.context {
@@ -61,6 +66,8 @@ impl Error for CliError {
             Epub(err) => Some(err),
             Log(err) => Some(err),
             Io(err) => Some(err),
+            Image(err) => Some(err),
+            Msg(_) => None,
         }
     }
 }
@@ -80,5 +87,17 @@ impl From<SetLoggerError> for CliError {
 impl From<io::Error> for CliError {
     fn from(error: io::Error) -> CliError {
         CliError::with_kind(ErrorKind::Io(error))
+    }
+}
+
+impl From<ImageError> for CliError {
+    fn from(error: ImageError) -> CliError {
+        CliError::with_kind(ErrorKind::Image(error))
+    }
+}
+
+impl From<String> for CliError {
+    fn from(message: String) -> CliError {
+        CliError::with_kind(ErrorKind::Msg(message))
     }
 }

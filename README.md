@@ -118,6 +118,7 @@ To these other awesome projects that made this one less of a pain to make!
 - [clap], that powers the CLI with it excellent argument parser.
 - [epub-builder], that handles the actual EPUB generation.
 - [html-escape], ensures that the content is properly HTML escaped.
+- [imagesize], that recognizes the cover image formats and its dimensions.
 - [log] for its simple API to control the application output.
 - [humantime], that formats the time for the verbose output.
 - [console] for its easy-to-use cross-platform abstractions over terminal text formatting.
@@ -137,6 +138,7 @@ The rest of the project is under the [Unlicense License](LICENSE).
 [epub-builder]: https://github.com/lise-henry/epub-builder
 [clap]: https://github.com/clap-rs/clap
 [html-escape]: https://github.com/magiclen/html-escape
+[imagesize]: https://github.com/Roughsketch/imagesize
 [log]: https://github.com/rust-lang/log
 [humantime]: https://github.com/tailhook/humantime
 [console]: https://github.com/mitsuhiko/console
