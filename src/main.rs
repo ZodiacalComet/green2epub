@@ -118,10 +118,13 @@ fn run(args: Args) -> CliResult<()> {
         .enumerate()
         .map(|(i, path)| (i + 1, PathBuf::from(path)))
     {
-        let title = path
-            .file_stem()
-            .expect(&format!("failed to get stem of {}", path.display()))
-            .to_string_lossy();
+        let title = match path.file_stem() {
+            Some(stem) => stem.to_string_lossy(),
+            None => Err(CliError::from(format!(
+                "failed to get file stem for input file: {:?}",
+                path.display()
+            )))?,
+        };
         let mut paste = PasteContent::new(&title);
 
         debug!("Opening file {:?}", path.display());
