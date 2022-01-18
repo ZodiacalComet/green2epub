@@ -21,7 +21,7 @@ mod tag;
 
 use args::Args;
 use content::{coverpage_content, stylesheet_content, PasteContent, COVER_STYLESHEET};
-use errors::{CliError, CliResult};
+use errors::{CliError, CliResult, ResultExt};
 use parser::LineParser;
 use tag::Tag;
 
@@ -49,10 +49,7 @@ fn run(args: Args) -> CliResult<()> {
         let mut image_bytes: Vec<u8> = Vec::new();
         File::open(&path)
             .and_then(|mut file| file.read_to_end(&mut image_bytes))
-            .map_err(|err| {
-                CliError::from(err)
-                    .context(format!("failed to open cover image: {:?}", path.display()))
-            })?;
+            .context(format!("failed to open cover image: {:?}", path.display()))?;
 
         let (extension, mime_type, dimensions) = match (
             imagesize::image_type(&image_bytes),
@@ -128,9 +125,8 @@ fn run(args: Args) -> CliResult<()> {
         let mut paste = PasteContent::new(&title);
 
         debug!("Opening file {:?}", path.display());
-        let content = read_to_string(&path).map_err(|err| {
-            CliError::from(err).context(format!("failed to read input file: {:?}", path.display()))
-        })?;
+        let content = read_to_string(&path)
+            .context(format!("failed to read input file: {:?}", path.display()))?;
 
         let mut line_parser = LineParser::default();
         let progress = ProgressBar::new(content.lines().count() as u64)
@@ -178,12 +174,10 @@ fn run(args: Args) -> CliResult<()> {
         .truncate(true)
         .write(true)
         .open(&args.output)
-        .map_err(|err| {
-            CliError::from(err).context(format!("failed to create output file: {:?}", &args.output))
-        })?;
+        .context(format!("failed to create output file: {:?}", &args.output))?;
 
     epub.generate(&mut output_file)
-        .map_err(|err| CliError::from(err).context("failed to generate EPUB"))?;
+        .context("failed to generate EPUB")?;
 
     info!(
         "{}",

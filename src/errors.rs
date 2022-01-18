@@ -101,3 +101,22 @@ impl From<String> for CliError {
         CliError::with_kind(ErrorKind::Msg(message))
     }
 }
+
+pub trait ResultExt {
+    type OkValue;
+    fn context<S: ToString>(self, message: S) -> Result<Self::OkValue, CliError>;
+}
+
+impl<T, E> ResultExt for Result<T, E>
+where
+    E: Into<CliError>,
+{
+    type OkValue = T;
+
+    fn context<S: ToString>(self, message: S) -> Result<Self::OkValue, CliError> {
+        match self {
+            Ok(value) => Ok(value),
+            Err(err) => Err(err.into().context(message)),
+        }
+    }
+}
