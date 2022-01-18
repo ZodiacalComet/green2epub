@@ -27,7 +27,7 @@ impl Logger {
     fn new(level: Level) -> Self {
         Self {
             level,
-            term: Mutex::new(Term::stdout()),
+            term: Mutex::new(Term::buffered_stderr()),
         }
     }
 
