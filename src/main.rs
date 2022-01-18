@@ -21,11 +21,11 @@ mod tag;
 
 use args::Args;
 use content::{coverpage_content, stylesheet_content, PasteContent, COVER_STYLESHEET};
-use errors::{CliError, Result};
+use errors::{CliError, CliResult};
 use parser::LineParser;
 use tag::Tag;
 
-fn run(args: Args) -> Result<()> {
+fn run(args: Args) -> CliResult<()> {
     logger::init(args.verbose)?;
 
     debug!("Parsed arguments: {:?}", args);

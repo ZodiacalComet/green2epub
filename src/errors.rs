@@ -4,7 +4,7 @@ use epub_builder::Error as EpubError;
 use imagesize::ImageError;
 use log::SetLoggerError;
 
-pub type Result<T> = std::result::Result<T, CliError>;
+pub type CliResult<T> = std::result::Result<T, CliError>;
 
 #[derive(Debug)]
 pub enum ErrorKind {
