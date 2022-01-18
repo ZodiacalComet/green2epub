@@ -113,17 +113,38 @@ mod test {
         };
     }
 
+    macro_rules! assert_parse {
+        (spoiler, $parser:ident, $expected:expr, $raw:expr) => {
+            assert_eq!(&$parser.parse($raw), $expected);
+            assert_eq!(
+                $parser.open_spoiler, true,
+                "expected `open_spoiler` attribute to be `true`: {:?}",
+                $raw
+            );
+        };
+        ($parser:ident, $expected:expr, $raw:expr) => {
+            assert_eq!(&$parser.parse($raw), $expected);
+            assert_eq!(
+                $parser.open_spoiler, false,
+                "expected `open_spoiler` attribute to be `false`: {:?}",
+                $raw
+            );
+        };
+    }
+
     #[test]
     fn highlight_lines() {
         let mut parser = LineParser::default();
 
-        assert_eq!(
+        assert_parse!(
+            parser,
             tag!("A paragraph without highlight"),
-            &parser.parse("A paragraph without highlight")
+            "A paragraph without highlight"
         );
-        assert_eq!(
+        assert_parse!(
+            parser,
             tag!(hi, ">Line with highlight"),
-            &parser.parse(">Line with highlight")
+            ">Line with highlight"
         );
     }
 
@@ -131,27 +152,29 @@ mod test {
     fn single_line_spoiler() {
         let mut parser = LineParser::default();
 
-        assert_eq!(
+        assert_parse!(
+            parser,
             tag!(spoiler!("This is a spoiler paragraph")),
-            &parser.parse("[spoiler]This is a spoiler paragraph[/spoiler]")
+            "[spoiler]This is a spoiler paragraph[/spoiler]"
         );
-        assert_eq!(
+        assert_parse!(
+            parser,
             tag!("Starts normal ", spoiler!("and then there is a spoiler")),
-            &parser.parse("Starts normal [spoiler]and then there is a spoiler[/spoiler]")
+            "Starts normal [spoiler]and then there is a spoiler[/spoiler]"
         );
-        assert_eq!(
+        assert_parse!(
+            parser,
             tag!(spoiler!("Starts with a spoiler"), " and ends normal"),
-            &parser.parse("[spoiler]Starts with a spoiler[/spoiler] and ends normal")
+            "[spoiler]Starts with a spoiler[/spoiler] and ends normal"
         );
-        assert_eq!(
+        assert_parse!(
+            parser,
             tag!(
                 "Starts normal ",
                 spoiler!(", then a spoiler in the middle"),
                 " and ends normal"
             ),
-            &parser.parse(
-                "Starts normal [spoiler], then a spoiler in the middle[/spoiler] and ends normal"
-            )
+            "Starts normal [spoiler], then a spoiler in the middle[/spoiler] and ends normal"
         );
     }
 
@@ -159,50 +182,49 @@ mod test {
     fn single_line_spoiler_with_highlight() {
         let mut parser = LineParser::default();
 
-        assert_eq!(
+        assert_parse!(
+            parser,
             tag!(hi, spoiler!(">This is a spoiler paragraph")),
-            &parser.parse("[spoiler]>This is a spoiler paragraph[/spoiler]")
+            "[spoiler]>This is a spoiler paragraph[/spoiler]"
         );
-        assert_eq!(
+        assert_parse!(
+            parser,
             tag!(
                 hi,
                 ">Starts normal with '>' ",
                 spoiler!("and then there is a spoiler")
             ),
-            &parser.parse(">Starts normal with '>' [spoiler]and then there is a spoiler[/spoiler]")
+            ">Starts normal with '>' [spoiler]and then there is a spoiler[/spoiler]"
         );
-        assert_eq!(
+        assert_parse!(
+            parser,
             tag!(
                 hi,
                 spoiler!(">Starts with a spoiler and '>' inside of it"),
                 " and ends normal"
             ),
-            &parser.parse(
-                "[spoiler]>Starts with a spoiler and '>' inside of it[/spoiler] and ends normal"
-            )
+            "[spoiler]>Starts with a spoiler and '>' inside of it[/spoiler] and ends normal"
         );
-        assert_eq!(
+        assert_parse!(
+            parser,
             tag!(
                 hi,
                 ">Starts normal and with '>' ",
                 spoiler!(", then a spoiler in the middle"),
                 " and ends normal"
             ),
-            &parser.parse(
-                ">Starts normal and with '>' [spoiler], then a spoiler in the middle[/spoiler] and ends normal"
-            )
+            ">Starts normal and with '>' [spoiler], then a spoiler in the middle[/spoiler] and ends normal"
         );
 
-        assert_eq!(
+        assert_parse!(
+            parser,
             tag!(
                 hi,
                 ">",
                 spoiler!("Starts with a spoiler and '>' outside of it"),
                 " and ends normal"
             ),
-            &parser.parse(
-                ">[spoiler]Starts with a spoiler and '>' outside of it[/spoiler] and ends normal"
-            )
+            ">[spoiler]Starts with a spoiler and '>' outside of it[/spoiler] and ends normal"
         );
     }
 
@@ -210,20 +232,25 @@ mod test {
     fn multiple_line_spoiler() {
         let mut parser = LineParser::default();
 
-        assert_eq!(
+        assert_parse!(
+            spoiler,
+            parser,
             tag!("Starts normal ", spoiler!("and then an spoiler opens")),
-            &parser.parse("Starts normal [spoiler]and then an spoiler opens")
+            "Starts normal [spoiler]and then an spoiler opens"
         );
-        assert_eq!(
+        assert_parse!(
+            spoiler,
+            parser,
             tag!(spoiler!("The unclosed spoiler continues on this line")),
-            &parser.parse("The unclosed spoiler continues on this line")
+            "The unclosed spoiler continues on this line"
         );
-        assert_eq!(
+        assert_parse!(
+            parser,
             tag!(
                 spoiler!("The spoiler ends here"),
                 " and continues as normal"
             ),
-            &parser.parse("The spoiler ends here[/spoiler] and continues as normal")
+            "The spoiler ends here[/spoiler] and continues as normal"
         );
     }
 
@@ -231,32 +258,38 @@ mod test {
     fn multiple_line_spoiler_with_highlight() {
         let mut parser = LineParser::default();
 
-        assert_eq!(
+        assert_parse!(
+            spoiler,
+            parser,
             tag!(
                 hi,
                 ">Starts normal and with '>' ",
                 spoiler!("and then an spoiler opens")
             ),
-            &parser.parse(">Starts normal and with '>' [spoiler]and then an spoiler opens")
+            ">Starts normal and with '>' [spoiler]and then an spoiler opens"
         );
-        assert_eq!(
+        assert_parse!(
+            spoiler,
+            parser,
             tag!(hi, spoiler!(">The unclosed spoiler continues on this line")),
-            &parser.parse(">The unclosed spoiler continues on this line")
+            ">The unclosed spoiler continues on this line"
         );
-        assert_eq!(
+        assert_parse!(
+            parser,
             tag!(
                 hi,
                 spoiler!(">The spoiler ends here"),
                 " and continues as normal"
             ),
-            &parser.parse(">The spoiler ends here[/spoiler] and continues as normal")
+            ">The spoiler ends here[/spoiler] and continues as normal"
         );
 
         // A closing tag at the start
         let _ = &parser.parse("[spoiler]");
-        assert_eq!(
+        assert_parse!(
+            parser,
             tag!(hi, ">Nothing here either"),
-            &parser.parse("[/spoiler]>Nothing here either")
+            "[/spoiler]>Nothing here either"
         );
     }
 
@@ -264,17 +297,21 @@ mod test {
     fn unclosed_spoiler() {
         let mut parser = LineParser::default();
 
-        assert_eq!(
+        assert_parse!(
+            spoiler,
+            parser,
             tag!(spoiler!("Oh no I lost my spoiler closing tag")),
-            &parser.parse("[spoiler]Oh no I lost my spoiler closing tag")
+            "[spoiler]Oh no I lost my spoiler closing tag"
         );
-        assert_eq!(
+        assert_parse!(
+            spoiler,
+            parser,
             tag!(spoiler!(
                 "Now I can't stop the [spoiler] from consuming everything"
             )),
-            &parser.parse("Now I can't stop the [spoiler] from consuming everything")
+            "Now I can't stop the [spoiler] from consuming everything"
         );
-        assert_eq!(tag!(spoiler!("Help!")), &parser.parse("Help!"));
+        assert_parse!(spoiler, parser, tag!(spoiler!("Help!")), "Help!");
     }
 
     #[test]
@@ -282,24 +319,33 @@ mod test {
         let mut parser = LineParser::default();
 
         // Single line
-        assert_eq!(
+        assert_parse!(
+            parser,
             tag!("Nothing here"),
-            &parser.parse("[spoiler][/spoiler]Nothing here")
+            "[spoiler][/spoiler]Nothing here"
         );
-        assert_eq!(
+        assert_parse!(
+            parser,
             tag!("Nothing here ", ", nothing there"),
-            &parser.parse("Nothing here [spoiler][/spoiler], nothing there")
+            "Nothing here [spoiler][/spoiler], nothing there"
         );
-        assert_eq!(
+        assert_parse!(
+            parser,
             tag!("Nothing there"),
-            &parser.parse("Nothing there[spoiler][/spoiler]")
+            "Nothing there[spoiler][/spoiler]"
         );
 
         // In two lines
-        assert_eq!(tag!("Nothing here"), &parser.parse("Nothing here[spoiler]"));
-        assert_eq!(
+        assert_parse!(
+            spoiler,
+            parser,
+            tag!("Nothing here"),
+            "Nothing here[spoiler]"
+        );
+        assert_parse!(
+            parser,
             tag!("Nothing here either"),
-            &parser.parse("[/spoiler]Nothing here either")
+            "[/spoiler]Nothing here either"
         );
     }
 }
