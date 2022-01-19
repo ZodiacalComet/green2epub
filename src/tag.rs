@@ -1,6 +1,6 @@
 use std::fmt;
 
-use html_escape::encode_text;
+use html_escape::{encode_double_quoted_attribute, encode_text};
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Child {
@@ -89,7 +89,7 @@ impl fmt::Display for Tag {
         write!(f, "<{}", self.name)?;
 
         for (attr, value) in &self.attributes {
-            write!(f, " {}=\"{}\"", attr, value)?;
+            write!(f, " {}=\"{}\"", attr, encode_double_quoted_attribute(value))?;
         }
 
         if self.children.is_empty() {
