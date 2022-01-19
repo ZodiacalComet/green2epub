@@ -1,7 +1,9 @@
 use std::{fmt::Arguments, io::Write, sync::Mutex, time::SystemTime};
 
-use console::{style, Term};
+use console::{set_colors_enabled, style, Term};
 use log::{Level, Log, Metadata, Record, SetLoggerError};
+
+use crate::args::Color;
 
 fn indent_args(args: &Arguments<'_>) -> String {
     args.to_string()
@@ -96,11 +98,21 @@ impl Log for Logger {
     fn flush(&self) {}
 }
 
-pub fn init(verbose: usize) -> Result<(), SetLoggerError> {
+pub fn init(verbose: usize, color: Color) -> Result<(), SetLoggerError> {
     let level = match verbose {
         0 => Level::Info,
         1 => Level::Debug,
         _ => Level::Trace,
+    };
+
+    // `console::style()`, which is used everywhere on the application, doesn't initialize with
+    // `for_stderr` to true, so it checks for color in stdout with `console::colors_enabled()`.
+    // Knowing that, instead of making an alias or setting it on each instance, the following is
+    // done. All of the output goes to stderr anyways.
+    match color {
+        Color::Always => set_colors_enabled(true),
+        Color::Never => set_colors_enabled(false),
+        _ => {}
     };
 
     log::set_boxed_logger(Box::new(Logger::new(level)))

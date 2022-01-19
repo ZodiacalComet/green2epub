@@ -1,5 +1,18 @@
 #![deny(missing_docs)]
-use clap::Parser;
+use clap::{ArgEnum, Parser};
+
+#[derive(ArgEnum, Debug, Clone, Copy)]
+pub enum Color {
+    Auto,
+    Always,
+    Never,
+}
+
+impl Default for Color {
+    fn default() -> Color {
+        Color::Auto
+    }
+}
 
 #[derive(Parser, Debug)]
 #[clap(version, author)]
@@ -28,6 +41,9 @@ pub struct Args {
     /// Shows verbose output, can be used multiple times to set level of verbosity.
     #[clap(short, long, parse(from_occurrences))]
     pub verbose: usize,
+    /// When to use colors.
+    #[clap(long, arg_enum, default_value_t)]
+    pub color: Color,
     /// Path for the generated epub file.
     #[clap(short, long)]
     pub output: String,

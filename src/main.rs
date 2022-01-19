@@ -26,7 +26,7 @@ use parser::LineParser;
 use tag::Tag;
 
 fn run(args: Args) -> CliResult<()> {
-    logger::init(args.verbose)?;
+    logger::init(args.verbose, args.color)?;
 
     debug!("Parsed arguments: {:?}", args);
 
