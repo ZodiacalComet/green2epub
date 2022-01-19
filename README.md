@@ -26,11 +26,38 @@ ARGS:
             Text files in greentext format to convert
 
 OPTIONS:
+    -t, --title <TITLE>
+            Title of the greentext
+
     -a, --author <AUTHOR>
             Name of the author
 
     -c, --cover <FILE>
             Cover image to use
+
+    -s, --subject <SUBJECT>
+            Greentext subjects/tags.
+
+            Can be used multiple times to set more than one.
+
+    -o, --output <PATH>
+            Path for the generated epub file
+
+        --green-color <COLOR>
+            Color of the green highlight
+
+            [default: #2CAF26]
+
+        --spoiler-color <COLOR>
+            Color of the spoiler highlight
+
+            [default: #000]
+
+    -v, --verbose
+            Shows verbose output, can be used multiple times to set level of verbosity
+
+    -q, --quiet
+            Supress all output
 
         --color <WHEN>
             When to use colors
@@ -38,35 +65,8 @@ OPTIONS:
             [default: auto]
             [possible values: auto, always, never]
 
-        --green-color <COLOR>
-            Color of the green highlight
-
-            [default: #2CAF26]
-
     -h, --help
             Print help information
-
-    -o, --output <PATH>
-            Path for the generated epub file
-
-    -q, --quiet
-            Supress all output
-
-    -s, --subject <SUBJECT>
-            Greentext subjects/tags.
-
-            Can be used multiple times to set more than one.
-
-        --spoiler-color <COLOR>
-            Color of the spoiler highlight
-
-            [default: #000]
-
-    -t, --title <TITLE>
-            Title of the greentext
-
-    -v, --verbose
-            Shows verbose output, can be used multiple times to set level of verbosity
 
     -V, --version
             Print version information
