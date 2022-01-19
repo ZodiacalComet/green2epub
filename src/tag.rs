@@ -47,26 +47,10 @@ impl fmt::Display for Child {
     }
 }
 
-// TODO: Is there a better name for `WithValue` variant?
-#[derive(Debug, Clone, PartialEq)]
-pub enum Attribute {
-    WithValue(String, String),
-    Boolean(String),
-}
-
-impl fmt::Display for Attribute {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Attribute::WithValue(attr, value) => write!(f, "{}=\"{}\"", attr, value),
-            Attribute::Boolean(name) => write!(f, "{}", name),
-        }
-    }
-}
-
 #[derive(Debug, Clone, PartialEq)]
 pub struct Tag {
     name: String,
-    attributes: Vec<Attribute>,
+    attributes: Vec<(String, String)>,
     children: Vec<Child>,
 }
 
@@ -87,16 +71,7 @@ impl Tag {
         N: ToString,
         V: ToString,
     {
-        self.attributes
-            .push(Attribute::WithValue(name.to_string(), value.to_string()));
-        self
-    }
-
-    pub fn boolean_attribute<N>(&mut self, name: N) -> &mut Self
-    where
-        N: ToString,
-    {
-        self.attributes.push(Attribute::Boolean(name.to_string()));
+        self.attributes.push((name.to_string(), value.to_string()));
         self
     }
 
@@ -113,8 +88,8 @@ impl fmt::Display for Tag {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "<{}", self.name)?;
 
-        for attribute in &self.attributes {
-            write!(f, " {}", attribute)?;
+        for (attr, value) in &self.attributes {
+            write!(f, " {}=\"{}\"", attr, value)?;
         }
 
         if self.children.is_empty() {
