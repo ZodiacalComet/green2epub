@@ -30,7 +30,7 @@ pub struct Args {
     /// Greentext subjects/tags.
     ///
     /// Can be used multiple times to set more than one.
-    #[clap(short, long = "subject", value_name = "SUBJECT", forbid_empty_values(true))]
+    #[clap(short, long = "subject", alias = "tag", value_name = "SUBJECT", forbid_empty_values(true))]
     pub subjects: Option<Vec<String>>,
     /// Color of the green highlight.
     #[clap(long, default_value = "#2CAF26", value_name = "COLOR", forbid_empty_values(true))]

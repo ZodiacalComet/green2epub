@@ -90,7 +90,7 @@ Now let's imagine that we have `paste-author-cover.png` that we'd like to use as
     --cover paste-author-cover.png 001-paste-author.txt 002-paste-author.txt 003-paste-author.txt
 ```
 
-Maybe you ~~need~~ like having subjects on EPUBs, for that you can provide the `--subject` flag as many times as needed like so:
+Maybe you ~~need~~ like having subjects on EPUBs, for that you can provide the `--subject`/`--tag` flag as many times as needed like so:
 
 ```sh
   green2epub --title "Paste" --author "Author" --output "Author - Paste.epub" \
