@@ -19,20 +19,26 @@ green2epub 0.1.0
 Create an EPUB from text files in greentext format
 
 USAGE:
-    green2epub [OPTIONS] --title <TITLE> --author <AUTHOR> --output <OUTPUT> [FILES]...
+    green2epub [OPTIONS] --title <TITLE> --author <AUTHOR> --output <PATH> [FILE]...
 
 ARGS:
-    <FILES>...
+    <FILE>...
             Text files in greentext format to convert
 
 OPTIONS:
     -a, --author <AUTHOR>
             Name of the author
 
-    -c, --cover <COVER>
+    -c, --cover <FILE>
             Cover image to use
 
-        --green-color <GREEN_COLOR>
+        --color <WHEN>
+            When to use colors
+
+            [default: auto]
+            [possible values: auto, always, never]
+
+        --green-color <COLOR>
             Color of the green highlight
 
             [default: #2CAF26]
@@ -40,15 +46,18 @@ OPTIONS:
     -h, --help
             Print help information
 
-    -o, --output <OUTPUT>
+    -o, --output <PATH>
             Path for the generated epub file
 
-    -s, --subject <SUBJECTS>
+    -q, --quiet
+            Supress all output
+
+    -s, --subject <SUBJECT>
             Greentext subjects/tags.
 
             Can be used multiple times to set more than one.
 
-        --spoiler-color <SPOILER_COLOR>
+        --spoiler-color <COLOR>
             Color of the spoiler highlight
 
             [default: #000]
