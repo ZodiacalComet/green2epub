@@ -19,24 +19,24 @@ impl Default for Color {
 /// Create an EPUB from text files in greentext format.
 pub struct Args {
     /// Title of the greentext.
-    #[clap(short, long)]
+    #[clap(short, long, forbid_empty_values(true))]
     pub title: String,
     /// Name of the author.
-    #[clap(short, long)]
+    #[clap(short, long, forbid_empty_values(true))]
     pub author: String,
     /// Cover image to use.
-    #[clap(short, long)]
+    #[clap(short, long, forbid_empty_values(true))]
     pub cover: Option<String>,
     /// Greentext subjects/tags.
     ///
     /// Can be used multiple times to set more than one.
-    #[clap(short, long = "subject")]
+    #[clap(short, long = "subject", forbid_empty_values(true))]
     pub subjects: Option<Vec<String>>,
     /// Color of the green highlight.
-    #[clap(long, default_value = "#2CAF26")]
+    #[clap(long, default_value = "#2CAF26", forbid_empty_values(true))]
     pub green_color: String,
     /// Color of the spoiler highlight.
-    #[clap(long, default_value = "#000")]
+    #[clap(long, default_value = "#000", forbid_empty_values(true))]
     pub spoiler_color: String,
     /// Supress all output.
     #[clap(short, long, conflicts_with("verbose"))]
@@ -48,8 +48,9 @@ pub struct Args {
     #[clap(long, arg_enum, default_value_t)]
     pub color: Color,
     /// Path for the generated epub file.
-    #[clap(short, long)]
+    #[clap(short, long, forbid_empty_values(true))]
     pub output: String,
     /// Text files in greentext format to convert.
+    #[clap(forbid_empty_values(true))]
     pub files: Vec<String>,
 }
