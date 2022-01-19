@@ -38,6 +38,9 @@ pub struct Args {
     /// Color of the spoiler highlight.
     #[clap(long, default_value = "#000")]
     pub spoiler_color: String,
+    /// Supress all output.
+    #[clap(short, long, conflicts_with("verbose"))]
+    pub quiet: bool,
     /// Shows verbose output, can be used multiple times to set level of verbosity.
     #[clap(short, long, parse(from_occurrences))]
     pub verbose: usize,

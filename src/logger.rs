@@ -1,7 +1,7 @@
 use std::{fmt::Arguments, io::Write, sync::Mutex, time::SystemTime};
 
 use console::{set_colors_enabled, style, Term};
-use log::{Level, Log, Metadata, Record, SetLoggerError};
+use log::{Level, LevelFilter, Log, Metadata, Record, SetLoggerError};
 
 use crate::args::Color;
 
@@ -21,12 +21,12 @@ fn indent_args(args: &Arguments<'_>) -> String {
 }
 
 struct Logger {
-    level: Level,
+    level: LevelFilter,
     term: Mutex<Term>,
 }
 
 impl Logger {
-    fn new(level: Level) -> Self {
+    fn new(level: LevelFilter) -> Self {
         Self {
             level,
             term: Mutex::new(Term::buffered_stderr()),
@@ -98,11 +98,12 @@ impl Log for Logger {
     fn flush(&self) {}
 }
 
-pub fn init(verbose: usize, color: Color) -> Result<(), SetLoggerError> {
-    let level = match verbose {
-        0 => Level::Info,
-        1 => Level::Debug,
-        _ => Level::Trace,
+pub fn init(verbose: usize, quiet: bool, color: Color) -> Result<(), SetLoggerError> {
+    let level_filter = match (verbose, quiet) {
+        (_, true) => LevelFilter::Off,
+        (0, false) => LevelFilter::Info,
+        (1, false) => LevelFilter::Debug,
+        (_, false) => LevelFilter::Trace,
     };
 
     // `console::style()`, which is used everywhere on the application, doesn't initialize with
@@ -115,6 +116,6 @@ pub fn init(verbose: usize, color: Color) -> Result<(), SetLoggerError> {
         _ => {}
     };
 
-    log::set_boxed_logger(Box::new(Logger::new(level)))
-        .map(|()| log::set_max_level(level.to_level_filter()))
+    log::set_boxed_logger(Box::new(Logger::new(level_filter)))
+        .map(|()| log::set_max_level(level_filter))
 }

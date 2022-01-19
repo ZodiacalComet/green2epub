@@ -11,6 +11,7 @@ use clap::Parser;
 use console::style;
 use epub_builder::{EpubBuilder, EpubContent, EpubVersion, ReferenceType, ZipLibrary};
 use indicatif::{ProgressBar, ProgressFinish, ProgressIterator, ProgressStyle};
+use log::Level;
 
 mod args;
 mod content;
@@ -26,7 +27,7 @@ use parser::LineParser;
 use tag::Tag;
 
 fn run(args: Args) -> CliResult<()> {
-    logger::init(args.verbose, args.color)?;
+    logger::init(args.verbose, args.quiet, args.color)?;
 
     debug!("Parsed arguments: {:?}", args);
 
@@ -132,20 +133,31 @@ fn run(args: Args) -> CliResult<()> {
             .context(format!("failed to read input file: {:?}", path.display()))?;
 
         let mut line_parser = LineParser::default();
-        let progress = ProgressBar::new(content.lines().count() as u64)
-            .with_message(format!("Parsing {:?}", style(path.display()).bold()))
-            .with_style(
-                ProgressStyle::default_spinner()
-                    .template("  {spinner}  {msg} {percent:>3}%")
-                    .on_finish(ProgressFinish::AndClear),
-            );
-        for line in content.lines().progress_with(progress) {
-            if line.is_empty() {
-                paste.add_line(Tag::new("br"));
-                continue;
-            }
+        macro_rules! parse_content {
+            ($iter:expr) => {
+                for line in $iter {
+                    if line.is_empty() {
+                        paste.add_line(Tag::new("br"));
+                        continue;
+                    }
 
-            paste.add_line(line_parser.parse(line));
+                    paste.add_line(line_parser.parse(line));
+                }
+            };
+        }
+
+        if log_enabled!(Level::Info) {
+            let progress = ProgressBar::new(content.lines().count() as u64)
+                .with_message(format!("Parsing {:?}", style(path.display()).bold()))
+                .with_style(
+                    ProgressStyle::default_spinner()
+                        .template("  {spinner}  {msg} {percent:>3}%")
+                        .on_finish(ProgressFinish::AndClear),
+                );
+
+            parse_content!(content.lines().progress_with(progress));
+        } else {
+            parse_content!(content.lines());
         }
 
         info!("Parsed {:?}", style(path.display()).bold());
