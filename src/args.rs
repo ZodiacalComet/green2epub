@@ -39,7 +39,7 @@ pub struct Args {
     #[clap(
         short,
         long = "subject",
-        alias = "tag",
+        visible_alias = "tag",
         value_name = "SUBJECT",
         display_order = 4,
         forbid_empty_values(true)

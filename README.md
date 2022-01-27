@@ -40,6 +40,8 @@ OPTIONS:
 
             Can be used multiple times to set more than one.
 
+            [aliases: tag]
+
     -o, --output <PATH>
             Path for the generated epub file
 
