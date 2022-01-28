@@ -102,11 +102,9 @@ Maybe you ~~need~~ like having subjects on EPUBs, for that you can provide the `
 
 ## Installation
 
-<!--
-### Release
+### Binary
 
-TODO
--->
+Go to the [Release page][release-page] and download the archive for your operating system.
 
 ### Build from source
 
@@ -121,6 +119,10 @@ Then you need to clone this repository and build it using `cargo` like so:
 ```
 
 The resulting binary will be located in `target/releases`.
+
+## Changelog
+
+See [CHANGELOG](CHANGELOG.md).
 
 ## Acknowledgments
 
@@ -145,6 +147,8 @@ And this [Rust CI template][rust-ci-template] made by [@SpectralOps]!
 The [`.css` files][fimfic2epub-styles] and [cover page structure][fimfic2epub-coverpage] used by the generated EPUBs are a part of [fimfic2epub][fimfic2epub], which are under the MIT License.
 
 The rest of the project is under the [Unlicense License](LICENSE).
+
+[release-page]: https://github.com/ZodiacalComet/green2epub/releases
 
 [python-script]: https://gist.github.com/ZodiacalComet/aea3ef9f48ab710c202dec6bbe6b1ff4
 
