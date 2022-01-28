@@ -44,7 +44,7 @@ impl Logger {
 
     fn send_buffered_content(&self) {
         let mut term = self.term.lock().unwrap();
-        term.write("\n".as_bytes())
+        term.write_all("\n".as_bytes())
             .expect("failed to write a newline to term's internal buffer");
         term.flush()
             .expect("failed to flush term's internal buffers");

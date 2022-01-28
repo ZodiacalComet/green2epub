@@ -66,10 +66,10 @@ fn run(args: Args) -> CliResult<()> {
                     ImageType::Jpeg => ("jpg", "image/jpeg"),
                     ImageType::Png => ("png", "image/png"),
                     ImageType::Webp => ("webp", "image/webp"),
-                    _ => Err(CliError::from(format!(
+                    _ => return Err(CliError::from(format!(
                         "invalid format for cover image: {:?}",
                         img_type
-                    )))?,
+                    ))),
                 };
 
                 debug!("Cover image format: {:?}", extension);
@@ -77,14 +77,14 @@ fn run(args: Args) -> CliResult<()> {
 
                 (extension, mime_type, dimensions)
             }
-            (Err(err), _) => Err(CliError::from(err).context(format!(
+            (Err(err), _) => return Err(CliError::from(err).context(format!(
                 "failed to recognize cover image format: {:?}",
                 path.display()
-            )))?,
-            (_, Err(err)) => Err(CliError::from(err).context(format!(
+            ))),
+            (_, Err(err)) => return Err(CliError::from(err).context(format!(
                 "failed to get cover image dimensions: {:?}",
                 path.display()
-            )))?,
+            ))),
         };
 
         let href = format!("img/cover.{}", extension);
@@ -121,10 +121,10 @@ fn run(args: Args) -> CliResult<()> {
     {
         let title = match path.file_stem() {
             Some(stem) => stem.to_string_lossy(),
-            None => Err(CliError::from(format!(
+            None => return Err(CliError::from(format!(
                 "failed to get file stem for input file: {:?}",
                 path.display()
-            )))?,
+            ))),
         };
         let mut paste = PasteContent::new(&title);
 
