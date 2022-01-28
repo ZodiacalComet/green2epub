@@ -1,0 +1,50 @@
+#compdef green2epub
+
+autoload -U is-at-least
+
+_green2epub() {
+    typeset -A opt_args
+    typeset -a _arguments_options
+    local ret=1
+
+    if is-at-least 5.2; then
+        _arguments_options=(-s -S -C)
+    else
+        _arguments_options=(-s -C)
+    fi
+
+    local context curcontext="$curcontext" state line
+    _arguments "${_arguments_options[@]}" \
+'-t+[Title of the greentext]:TITLE: ' \
+'--title=[Title of the greentext]:TITLE: ' \
+'-a+[Name of the author]:AUTHOR: ' \
+'--author=[Name of the author]:AUTHOR: ' \
+'-c+[Cover image to use]:FILE:_files' \
+'--cover=[Cover image to use]:FILE:_files' \
+'*-s+[Greentext subjects/tags]:SUBJECT: ' \
+'*--subject=[Greentext subjects/tags]:SUBJECT: ' \
+'*--tag=[Greentext subjects/tags]:SUBJECT: ' \
+'--green-color=[Color of the green highlight]:COLOR: ' \
+'--spoiler-color=[Color of the spoiler highlight]:COLOR: ' \
+'--color=[When to use colors]:WHEN:(auto always never)' \
+'-o+[Path for the generated epub file]:PATH:_files' \
+'--output=[Path for the generated epub file]:PATH:_files' \
+'-h[Print help information]' \
+'--help[Print help information]' \
+'-V[Print version information]' \
+'--version[Print version information]' \
+'*-v[Shows verbose output, can be used multiple times to set level of verbosity]' \
+'*--verbose[Shows verbose output, can be used multiple times to set level of verbosity]' \
+'(-v --verbose)-q[Supress all output]' \
+'(-v --verbose)--quiet[Supress all output]' \
+'*::files -- Text files in greentext format to convert:_files' \
+&& ret=0
+}
+
+(( $+functions[_green2epub_commands] )) ||
+_green2epub_commands() {
+    local commands; commands=()
+    _describe -t commands 'green2epub commands' commands "$@"
+}
+
+_green2epub "$@"

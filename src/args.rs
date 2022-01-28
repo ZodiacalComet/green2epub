@@ -1,5 +1,4 @@
-#![deny(missing_docs)]
-use clap::{ArgEnum, Parser};
+use clap::{ArgEnum, Parser, ValueHint};
 
 #[derive(ArgEnum, Debug, Clone, Copy)]
 pub enum Color {
@@ -30,6 +29,7 @@ pub struct Args {
         long,
         value_name = "FILE",
         display_order = 3,
+        value_hint(ValueHint::FilePath),
         forbid_empty_values(true)
     )]
     pub cover: Option<String>,
@@ -84,10 +84,15 @@ pub struct Args {
         long,
         value_name = "PATH",
         display_order = 5,
+        value_hint(ValueHint::FilePath),
         forbid_empty_values(true)
     )]
     pub output: String,
     /// Text files in greentext format to convert.
-    #[clap(value_name = "FILE", forbid_empty_values(true))]
+    #[clap(
+        value_name = "FILE",
+        value_hint(ValueHint::FilePath),
+        forbid_empty_values(true)
+    )]
     pub files: Vec<String>,
 }

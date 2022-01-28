@@ -129,6 +129,7 @@ To [fimfic2epub] by [@daniel-j] which, besides being used as a base, greatly ins
 To these other awesome projects that made this one less of a pain to make!
 
 - [clap], that powers the CLI with it excellent argument parser.
+- [clap-generate] which generates shell completions from [clap].
 - [epub-builder], that handles the actual EPUB generation.
 - [html-escape], ensures that the content is properly HTML escaped.
 - [imagesize], that recognizes the cover image formats and its dimensions.
@@ -156,6 +157,7 @@ The rest of the project is under the [Unlicense License](LICENSE).
 
 [epub-builder]: https://github.com/lise-henry/epub-builder
 [clap]: https://github.com/clap-rs/clap
+[clap-generate]: https://github.com/clap-rs/clap/tree/master/clap_complete
 [html-escape]: https://github.com/magiclen/html-escape
 [imagesize]: https://github.com/Roughsketch/imagesize
 [log]: https://github.com/rust-lang/log

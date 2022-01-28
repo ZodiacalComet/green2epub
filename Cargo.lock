@@ -113,6 +113,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "clap_complete"
+version = "3.0.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "be4dabb7e2f006497e1da045feaa512acf0686f76b68d94925da2d9422dcb521"
+dependencies = [
+ "clap",
+]
+
+[[package]]
 name = "clap_derive"
 version = "3.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -225,6 +234,7 @@ name = "green2epub"
 version = "0.1.0"
 dependencies = [
  "clap",
+ "clap_complete",
  "console",
  "epub-builder",
  "html-escape",
