@@ -141,7 +141,7 @@ And this [Rust CI template][rust-ci-template] made by [@SpectralOps]!
 
 ## License
 
-The contents of the `static` directory are a part of [fimfic2epub's stylesheets][fimfic2epub-styles], which are under the MIT License.
+The [`.css` files][fimfic2epub-styles] and [cover page structure][fimfic2epub-coverpage] used by the generated EPUBs are a part of [fimfic2epub][fimfic2epub], which are under the MIT License.
 
 The rest of the project is under the [Unlicense License](LICENSE).
 
@@ -149,6 +149,7 @@ The rest of the project is under the [Unlicense License](LICENSE).
 
 [fimfic2epub]: https://github.com/daniel-j/fimfic2epub
 [fimfic2epub-styles]: https://github.com/daniel-j/fimfic2epub/tree/master/src/style
+[fimfic2epub-coverpage]: https://github.com/daniel-j/fimfic2epub/blob/master/src/templates.js#L353
 [@daniel-j]: https://github.com/daniel-j
 
 [fimfiction]: https://www.fimfiction.net/
