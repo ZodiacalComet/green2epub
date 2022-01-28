@@ -126,7 +126,7 @@ The resulting binary will be located in `target/releases`.
 
 To [fimfic2epub] by [@daniel-j] which, besides being used as a base, greatly inspired this little project. It's excellent if you want [Fimfiction stories][fimfiction] as a proper EPUB, so check it out!
 
-And to these other awesome projects that made this one less of a pain to make!
+To these other awesome projects that made this one less of a pain to make!
 
 - [clap], that powers the CLI with it excellent argument parser.
 - [epub-builder], that handles the actual EPUB generation.
@@ -136,6 +136,8 @@ And to these other awesome projects that made this one less of a pain to make!
 - [humantime], that formats the time for the verbose output.
 - [console] for its easy-to-use cross-platform abstractions over terminal text formatting.
 - [indicatif], that provides the progress indicator used on the application.
+
+And this [Rust CI template][rust-ci-template] made by [@SpectralOps]!
 
 ## License
 
@@ -159,3 +161,6 @@ The rest of the project is under the [Unlicense License](LICENSE).
 [humantime]: https://github.com/tailhook/humantime
 [console]: https://github.com/mitsuhiko/console
 [indicatif]: https://github.com/console-rs/indicatif
+
+[rust-ci-template]: https://github.com/SpectralOps/rust-ci-release-template
+[@SpectralOps]: https://github.com/SpectralOps
