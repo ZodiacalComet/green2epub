@@ -57,7 +57,11 @@ impl Logger {
 
 impl Log for Logger {
     fn enabled(&self, metadata: &Metadata<'_>) -> bool {
-        metadata.level() <= self.level
+        if !metadata.target().starts_with(env!("CARGO_PKG_NAME")) {
+            false
+        } else {
+            metadata.level() <= self.level
+        }
     }
 
     fn log(&self, record: &Record<'_>) {

@@ -8,7 +8,7 @@ license = "Unlicense"
 
 [dependencies]
 clap = { version = "3.0", features = ["derive"] }
-epub-builder = { git = "https://github.com/lise-henry/epub-builder.git", rev = "ed4f8da" }
+epub-builder = "0.5"
 html-escape = "0.2"
 imagesize = "0.9"
 
