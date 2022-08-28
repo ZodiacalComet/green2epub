@@ -83,7 +83,7 @@ jobs:
           args: --release --locked --target ${{ matrix.target }}
 
       - name: Strip release binary (linux and macos)
-        if: matrix.build == 'x86_64-linux' || matrix.build == 'x86_64-macos'
+        if: matrix.build == 'x86_64-linux' || matrix.build == 'i686-linux' || matrix.build == 'x86_64-macos'
         run: strip "target/${{ matrix.target }}/release/$BIN_NAME"
 
       - name: Strip release binary (arm)
