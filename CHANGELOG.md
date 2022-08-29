@@ -20,6 +20,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Avoid creating an EPUB without any text files to convert.
+- Check if `COLOR` argument on `--green-color` and `--spoiler-color`
+  are a valid RGB hex color prior to using them in the CSS stylesheet
+  and give an explicative error message in the case that they are not.
+- Descriptions for `--green-color` and `--spoiler-color` in help and
+  in completions now mention that they expect an RGB color in
+  hexadecimal notation.
 
 ### Fix
 - Binary for `i686-linux` build was not being stripped of object file

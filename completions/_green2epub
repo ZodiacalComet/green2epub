@@ -24,8 +24,8 @@ _green2epub() {
 '*-s+[Greentext subjects/tags]:SUBJECT: ' \
 '*--subject=[Greentext subjects/tags]:SUBJECT: ' \
 '*--tag=[Greentext subjects/tags]:SUBJECT: ' \
-'--green-color=[Color of the green highlight]:COLOR: ' \
-'--spoiler-color=[Color of the spoiler highlight]:COLOR: ' \
+'--green-color=[RGB color of the green highlight in hexadecimal notation]:COLOR: ' \
+'--spoiler-color=[RGB color of the spoiler highlight in hexadecimal notation]:COLOR: ' \
 '--color=[When to use colors]:WHEN:(auto always never)' \
 '-o+[Path for the generated epub file]:PATH:_files' \
 '--output=[Path for the generated epub file]:PATH:_files' \

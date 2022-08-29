@@ -13,6 +13,34 @@ impl Default for Color {
     }
 }
 
+fn hex_color_validator(color: &str) -> Result<(), String> {
+    let len = color.len() - 1;
+    if !color.starts_with('#') || (len != 3 && len != 6) {
+        return Err(
+            "Hexadecimal notation for RGB color has to be either `#rgb` or `#rrggbb`".into(),
+        );
+    }
+
+    let invalid_chars = color
+        .chars()
+        .skip(1)
+        .filter(|c| !c.is_ascii_hexdigit())
+        .collect::<Vec<char>>();
+    if !invalid_chars.is_empty() {
+        return Err(format!(
+            "Invalid hexadecimal digit{}: {}",
+            if invalid_chars.len() > 1 { "s" } else { "" },
+            invalid_chars
+                .iter()
+                .map(|c| format!("{:?}", c))
+                .collect::<Vec<String>>()
+                .join(", ")
+        ));
+    }
+
+    Ok(())
+}
+
 #[derive(Parser, Debug)]
 #[clap(version, author)]
 /// Create an EPUB from text files in greentext format.
@@ -45,22 +73,24 @@ pub struct Args {
         forbid_empty_values(true)
     )]
     pub subjects: Vec<String>,
-    /// Color of the green highlight.
+    /// RGB color of the green highlight in hexadecimal notation.
     #[clap(
         long,
         default_value = "#2CAF26",
         value_name = "COLOR",
         display_order = 6,
-        forbid_empty_values(true)
+        forbid_empty_values(true),
+        validator(hex_color_validator)
     )]
     pub green_color: String,
-    /// Color of the spoiler highlight.
+    /// RGB color of the spoiler highlight in hexadecimal notation.
     #[clap(
         long,
         default_value = "#000",
         value_name = "COLOR",
         display_order = 7,
-        forbid_empty_values(true)
+        forbid_empty_values(true),
+        validator(hex_color_validator)
     )]
     pub spoiler_color: String,
     /// Shows verbose output, can be used multiple times to set level of verbosity.
