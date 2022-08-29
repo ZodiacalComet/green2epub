@@ -44,7 +44,7 @@ pub struct Args {
         display_order = 4,
         forbid_empty_values(true)
     )]
-    pub subjects: Option<Vec<String>>,
+    pub subjects: Vec<String>,
     /// Color of the green highlight.
     #[clap(
         long,

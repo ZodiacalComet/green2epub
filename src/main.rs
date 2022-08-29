@@ -37,10 +37,8 @@ fn run(args: Args) -> CliResult<()> {
         .metadata("title", args.title)?
         .stylesheet(stylesheet_content(args.green_color, args.spoiler_color).as_slice())?;
 
-    if let Some(subjects) = args.subjects {
-        for subject in subjects {
-            epub.metadata("subject", subject)?;
-        }
+    for subject in args.subjects {
+        epub.metadata("subject", subject)?;
     }
 
     if let Some(path) = args.cover.map(PathBuf::from) {
