@@ -18,6 +18,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fix
+- Binary for `i686-linux` build was not being stripped of object file
+  symbols, resulting in a way bigger binary when compared to the rest
+  of the linux builds.
+
 ## [v0.1.0] - 2022-01-28
 
 ### Added
