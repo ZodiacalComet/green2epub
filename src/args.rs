@@ -92,6 +92,7 @@ pub struct Args {
     #[clap(
         value_name = "FILE",
         value_hint(ValueHint::FilePath),
+        required(true),
         forbid_empty_values(true)
     )]
     pub files: Vec<String>,

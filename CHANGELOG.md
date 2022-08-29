@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Avoid creating an EPUB without any text files to convert.
+
 ### Fix
 - Binary for `i686-linux` build was not being stripped of object file
   symbols, resulting in a way bigger binary when compared to the rest
