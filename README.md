@@ -19,7 +19,7 @@ green2epub 0.1.0
 Create an EPUB from text files in greentext format
 
 USAGE:
-    green2epub [OPTIONS] --title <TITLE> --author <AUTHOR> --output <PATH> [FILE]...
+    green2epub [OPTIONS] --title <TITLE> --author <AUTHOR> --output <PATH> <FILE>...
 
 ARGS:
     <FILE>...
@@ -46,12 +46,12 @@ OPTIONS:
             Path for the generated epub file
 
         --green-color <COLOR>
-            Color of the green highlight
+            RGB color of the green highlight in hexadecimal notation
 
             [default: #2CAF26]
 
         --spoiler-color <COLOR>
-            Color of the spoiler highlight
+            RGB color of the spoiler highlight in hexadecimal notation
 
             [default: #000]
 
