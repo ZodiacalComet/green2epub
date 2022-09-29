@@ -19,7 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Support for multiple spoilers in the same line.
+- Support for multiple spoilers in the same line, not to be confused
+  as support for nested spoilers.
 
 ### Changed
 - Avoid creating an EPUB without any text files to convert.
