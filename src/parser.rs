@@ -1,4 +1,4 @@
-use crate::tag::Tag;
+use crate::tag::{Child, Tag};
 
 pub const RESET_FOREGROUND_CLASS: &str = "icolor";
 const SPOILER_OPEN_TAG: &str = "[spoiler]";
@@ -82,11 +82,28 @@ where
     tokens
 }
 
-macro_rules! push_span_tag {
-    ($paragraph:ident, $text:expr) => {
+macro_rules! __push_span_tag {
+    ($children:ident, $text:expr) => {
         let mut spoiler = Tag::new("span");
         spoiler.child($text);
-        $paragraph.child(spoiler);
+        $children.push(spoiler.into());
+    };
+}
+
+macro_rules! push_span_tag {
+    ($children:ident, $text:expr) => {
+        match $children.last_mut() {
+            Some(last) => {
+                if let Child::Tag(tag) = last {
+                    tag.child($text);
+                } else {
+                    __push_span_tag!($children, $text);
+                }
+            }
+            None => {
+                __push_span_tag!($children, $text);
+            }
+        };
     };
 }
 
@@ -100,13 +117,14 @@ impl LineParser {
         self.open_spoiler
     }
 
-    // FIX: Merge sequential span tags together.
     pub fn parse<S: ?Sized>(&mut self, line: &S) -> Tag
     where
         S: AsRef<str>,
     {
         let mut paragraph = Tag::new("p");
         let mut is_first_text = true;
+
+        let mut children: Vec<Child> = Vec::new();
 
         for token in tokenize(line) {
             // Remove highlight if it doesn't apply to the given line
@@ -121,21 +139,25 @@ impl LineParser {
 
             match token {
                 Token::Text(text) if self.open_spoiler => {
-                    push_span_tag!(paragraph, text);
+                    push_span_tag!(children, text);
                 }
                 Token::Text(text) => {
-                    paragraph.child(text);
+                    children.push(text.into());
                 }
                 // Place the tag as is if `open_spoiler` would stay the same.
                 Token::SpoilerOpen if self.open_spoiler => {
-                    push_span_tag!(paragraph, SPOILER_OPEN_TAG);
+                    push_span_tag!(children, SPOILER_OPEN_TAG);
                 }
                 Token::SpoilerClose if !self.open_spoiler => {
-                    push_span_tag!(paragraph, SPOILER_CLOSE_TAG);
+                    push_span_tag!(children, SPOILER_CLOSE_TAG);
                 }
                 Token::SpoilerOpen => self.open_spoiler = true,
                 Token::SpoilerClose => self.open_spoiler = false,
             };
+        }
+
+        for child in children.drain(0..) {
+            paragraph.child(child);
         }
 
         paragraph
@@ -159,8 +181,9 @@ mod test {
     }
 
     macro_rules! spoiler {
-        ($content: expr) => {
-            Tag::new("span").child($content)
+        ($($content: expr),+) => {
+            Tag::new("span")
+                $( .child($content) )+
         };
     }
 
@@ -411,7 +434,9 @@ mod test {
             spoiler,
             parser,
             tag!(spoiler!(
-                "Now I can't stop the [spoiler] from consuming everything"
+                "Now I can't stop the ",
+                "[spoiler]",
+                " from consuming everything"
             )),
             "Now I can't stop the [spoiler] from consuming everything"
         );
