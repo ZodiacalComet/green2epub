@@ -30,13 +30,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Descriptions for `--green-color` and `--spoiler-color` in help and
   in completions now mention that they expect an RGB color in
   hexadecimal notation.
+- Actually follow semantic versioning for referring to versions in
+  changelog file.
 
 ### Fix
 - Binary for `i686-linux` build was not being stripped of object file
   symbols, resulting in a way bigger binary when compared to the rest
   of the linux builds.
 
-## [v0.1.0] - 2022-01-28
+## [0.1.0] - 2022-01-28
 
 ### Added
 - Application generates EPUBs from text files in greentext format.
@@ -47,4 +49,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   an elaborate example and gives installation instructions.
 
 [Unreleased]: https://github.com/ZodiacalComet/green2epub/compare/v0.1.0...HEAD
-[v0.1.0]: https://github.com/ZodiacalComet/green2epub/releases/tag/v0.1.0
+[0.1.0]: https://github.com/ZodiacalComet/green2epub/releases/tag/v0.1.0
