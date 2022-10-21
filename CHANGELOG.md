@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fix
+- Last release wasn't reflected in the binary itself, this one patches
+  it.
+
 ## [0.2.0] - 2022-10-20
 
 ### Added
