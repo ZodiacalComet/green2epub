@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Link to a version comparison after [0.1.0] instead of linking the
+  release itself.
+
 ### Fix
 - Last release wasn't reflected in the binary itself, this one patches
   it.
@@ -55,5 +59,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   an elaborate example and gives installation instructions.
 
 [Unreleased]: https://github.com/ZodiacalComet/green2epub/compare/v0.2.0...HEAD
-[0.2.0]: https://github.com/ZodiacalComet/green2epub/releases/tag/v0.2.0
+[0.2.0]: https://github.com/ZodiacalComet/green2epub/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/ZodiacalComet/green2epub/releases/tag/v0.1.0
